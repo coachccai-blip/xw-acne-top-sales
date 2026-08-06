@@ -73,9 +73,10 @@ Logging takes under three seconds mid-shift.
 
 A small, separate journal you toggle on and off with the **📖 Journal** button at
 the top-right of the app (it becomes **✕ Close** to come back). It's a quiet
-gallery wall of success stories — each note has a **title**, a **price**, a
-**description**, and any number of **photos**. Add one with *+ New story*; tap a
-card to edit or delete it; tap a photo to view it full-screen. Photos are
+gallery wall of success stories — each note has a **title**, a **date** (shown on
+the card), a **price**, a **description**, and any number of **photos**. Add one
+with *+ New story*; tap a card to edit or delete it; tap a photo to view it
+full-screen. Photos are
 downscaled in the browser before being saved, and everything lives locally
 (`localStorage`, key `acne-sales-quest-journal-v1`), separate from the weekly
 quest data.
@@ -116,7 +117,7 @@ Static site, no build.
 index.html              # screens + bottom nav
 styles.css              # off-white theme, badges, radar, gauges
 app.js                  # tiers, thresholds, week logic, localStorage
-icon.svg                # app icon / favicon (line-drawn moose)
+logo-xw.png             # app logo / favicon / PWA icon (deer)
 manifest.webmanifest    # PWA metadata
 netlify.toml            # static hosting config
 ```

@@ -876,6 +876,17 @@ function saveJournal() {
 
 function uid() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function fmtPrice(v) { return '€' + Math.round(+v).toLocaleString('en-US'); }
+/** Today as a local YYYY-MM-DD string (for <input type="date">). */
+function todayISO() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+/** Format a YYYY-MM-DD string as e.g. "Aug 12, 2026" (no timezone drift). */
+function fmtStoryDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  if (!m) return '';
+  return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -944,6 +955,7 @@ function renderWall() {
       html += '<div class="note-nocover">✦</div>';
     }
     html += '<div class="note-body">';
+    if (note.date) html += `<div class="note-date">${escapeHtml(fmtStoryDate(note.date))}</div>`;
     if (note.title) html += `<div class="note-title">${escapeHtml(note.title)}</div>`;
     if (note.price !== '' && note.price != null) html += `<div class="note-price">${fmtPrice(note.price)}</div>`;
     if (note.desc) html += `<div class="note-desc">${escapeHtml(note.desc)}</div>`;
@@ -959,9 +971,10 @@ let draft = null;
 const storySheet = document.getElementById('storySheet');
 
 function openStory(existing) {
-  draft = existing ? JSON.parse(JSON.stringify(existing)) : { id: uid(), title: '', price: '', desc: '', photos: [] };
+  draft = existing ? JSON.parse(JSON.stringify(existing)) : { id: uid(), title: '', date: todayISO(), price: '', desc: '', photos: [] };
   document.getElementById('storyHeading').textContent = existing ? 'Story' : 'New story';
   document.getElementById('stTitle').value = draft.title || '';
+  document.getElementById('stDate').value = draft.date || '';
   document.getElementById('stPrice').value = (draft.price === '' || draft.price == null) ? '' : draft.price;
   document.getElementById('stDesc').value = draft.desc || '';
   document.getElementById('stDelete').hidden = !existing;
@@ -997,6 +1010,7 @@ document.getElementById('stPhoto').addEventListener('change', async (e) => {
 document.getElementById('stSave').addEventListener('click', () => {
   if (!draft) return;
   draft.title = document.getElementById('stTitle').value.trim();
+  draft.date = document.getElementById('stDate').value || '';
   const p = document.getElementById('stPrice').value;
   draft.price = (p === '' ? '' : Math.max(0, Math.round(+p)));
   draft.desc = document.getElementById('stDesc').value.trim();
