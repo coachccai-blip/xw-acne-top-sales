@@ -1,4 +1,4 @@
-# 🦌 Sales Quest
+# 🦌 Acne Studios — Sales Quest
 
 A **gamified sales journal for the shop floor**. You log what you do during the
 week; the app turns it into animal titles. Everything resets **Monday morning** —
@@ -32,7 +32,7 @@ Five levels, identical across all six categories.
 | 🧥 Suggest a Match | 🐦 Lovebird | 1 | 6 | 15 | 30 |
 | 🤝 Help a Colleague | 🦫 Meerkat | 1 | 6 | 15 | 30 |
 | 🔍 Provide Details | 🦉 Owl | 1 | 6 | 15 | 30 |
-| 📖 Tell the Brand Story | 🫎 Moose | 1 | 6 | 15 | 30 |
+| 📖 Tell the Acne Story | 🫎 Moose | 1 | 6 | 15 | 30 |
 
 Sleepy is always 0 — the start of every week.
 
