@@ -70,6 +70,31 @@ h1, h2 { font-weight: 600; margin: 0; }
   text-transform: uppercase; color: var(--ink-2);
 }
 
+/* ---- Monthly sales goal bar ---- */
+.goalbar { margin: 0 0 26px; }
+.goal-top {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  margin-bottom: 10px;
+}
+.goal-label {
+  font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2);
+}
+.goal-remain {
+  font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .01em;
+  white-space: nowrap;
+}
+.goal-track {
+  position: relative; height: 4px; background: var(--line); border-radius: 3px; overflow: hidden;
+}
+.goal-fill {
+  position: absolute; inset: 0 auto 0 0; height: 4px; border-radius: 3px; width: 0;
+  background: var(--t3); transition: width .6s ease, background-color .6s ease;
+}
+.goal-sub { margin-top: 9px; font-size: 12px; color: var(--ink-2); letter-spacing: .02em; }
+.goalbar.reached .goal-fill { background: var(--t4); }
+.goalbar.reached .goal-remain { font-size: 16px; }
+.goalbar.reached .goal-sub { color: var(--ink); font-weight: 600; }
+
 /* ---- Week meta ---- */
 .week-meta {
   display: flex; justify-content: space-between; align-items: flex-end;

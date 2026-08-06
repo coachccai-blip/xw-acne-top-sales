@@ -27,7 +27,7 @@ Five levels, identical across all six categories.
 
 | Category | Animal | Baxbax | Shibshib | Warrior | Elite |
 |----------|--------|-------:|---------:|--------:|------:|
-| 💰 Sales Amount | 🦚 Peacock | €500 | €4,500 | €6,250 | €10,000 |
+| 💰 Sales Amount | 🦚 Peacock | €500 | €5,000 | €6,500 | €10,000 |
 | 👜 Suggest a Bag | 🦘 Kangaroo | 1 | 6 | 15 | 30 |
 | 🧥 Suggest a Match | 🐦 Lovebird | 1 | 6 | 15 | 30 |
 | 🤝 Help a Colleague | 🦫 Meerkat | 1 | 6 | 15 | 30 |
@@ -38,7 +38,10 @@ Sleepy is always 0 — the start of every week.
 
 ## 📱 Screens
 
-- **🕸️ Week (home)** — a radar chart (six axes, four rings), the current week
+- **🕸️ Week (home)** — a **monthly Sales goal** bar at the top (starts at
+  €25,600 and counts down as Sales are logged through the month; when it hits
+  zero it reads *"Congratulations, you reached your monthly goal !"* and resets
+  each calendar month), a radar chart (six axes, four rings), the current week
   number and a live countdown to Monday reset, the logging list, and a quiet
   *Clear week* action at the bottom.
 - **📊 Progress** — one thin bar per category showing distance to the *next*

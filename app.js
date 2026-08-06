@@ -27,7 +27,7 @@ const CATS = [
     id: 'sales', name: 'Sales Amount', animal: 'Peacock', emoji: '🦚',
     unit: '', money: true,
     tag: 'Struts, fans the tail, closes.',
-    thresholds: [0, 500, 4500, 6250, 10000],
+    thresholds: [0, 500, 5000, 6500, 10000],
   },
   {
     id: 'bag', name: 'Suggest a Bag', animal: 'Kangaroo', emoji: '🦘',
@@ -62,6 +62,10 @@ const CATS = [
 ];
 
 const STORAGE_KEY = 'acne-sales-quest-v1';
+
+/* Monthly Sales target. Counts down as sales are logged across the month;
+   resets automatically each calendar month. */
+const MONTHLY_SALES_GOAL = 25600;
 
 /* -------------------------------------------------------------------------
    3. Single-weight line drawings — one per animal.
@@ -404,6 +408,42 @@ function radarSVG(values, { size = 340, labels = true } = {}) {
 /* -------------------------------------------------------------------------
    8. Renders
    ------------------------------------------------------------------------- */
+/* ---- Monthly sales goal ---- */
+function monthKey(date) { return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0'); }
+function weekMonthKey(weekKey) { const mon = weekKeyToMonday(weekKey); return mon ? monthKey(mon) : null; }
+
+/** Total sales logged across every week that belongs to the current month
+    (a week is attributed to the month of its Monday). Current week included. */
+function monthlySalesTotal() {
+  const mk = monthKey(new Date());
+  let total = 0;
+  if (STATE.currentWeek && weekMonthKey(STATE.currentWeek) === mk) total += STATE.current.sales || 0;
+  STATE.history.forEach((h) => {
+    if (weekMonthKey(h.week) === mk) total += (h.values && h.values.sales) || 0;
+  });
+  return total;
+}
+
+function renderGoal() {
+  const total = monthlySalesTotal();
+  const remaining = Math.max(0, MONTHLY_SALES_GOAL - total);
+  const pct = Math.max(0, Math.min(100, (total / MONTHLY_SALES_GOAL) * 100));
+  const bar = document.getElementById('goalBar');
+  document.getElementById('goalMonth').textContent = new Date().toLocaleDateString('en-US', { month: 'long' });
+  document.getElementById('goalFill').style.width = pct + '%';
+  const remainEl = document.getElementById('goalRemain');
+  const subEl = document.getElementById('goalSub');
+  if (remaining <= 0) {
+    bar.classList.add('reached');
+    remainEl.textContent = 'Goal reached 🎉';
+    subEl.textContent = 'Congratulations, you reached your monthly goal !';
+  } else {
+    bar.classList.remove('reached');
+    remainEl.textContent = fmtPrice(remaining) + ' to go';
+    subEl.textContent = fmtPrice(total) + ' of ' + fmtPrice(MONTHLY_SALES_GOAL);
+  }
+}
+
 function renderWeekMeta() {
   const now = new Date();
   const iso = isoWeek(now);
@@ -707,6 +747,7 @@ function clearAllTime() {
 
 function renderAll() {
   renderWeekMeta();
+  renderGoal();
   renderRadar();
   renderLog();
   renderGauges();
@@ -1011,6 +1052,7 @@ let STATE = loadState();
   // live countdown; roll the week over at the boundary
   setInterval(() => {
     renderCountdown();
+    renderGoal(); // keep the monthly goal fresh across day/month boundaries
     if (ensureWeek()) { renderAll(); showToast('New week. Everyone back to Sleepy.', null, 3600); }
   }, 1000);
 })();
