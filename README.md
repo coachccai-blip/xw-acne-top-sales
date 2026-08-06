@@ -82,7 +82,9 @@ quest data.
 - 🗓️ Week runs **Monday 00:00 → Sunday 23:59**, local store time.
 - 🔄 All counters reset to zero at the boundary; titles recalculated from zero.
 - 🔒 History is immutable once a week closes.
-- 👑 All-time highscores persist across resets, tracked per category.
+- 👑 All-time highscores are taken **only from closed weeks** in the history —
+  the current, in-progress week never counts. They can be wiped with a
+  *Clear all-time highs* button on the All-time screen (the week history stays).
 - ⚡ A title unlocks the moment its threshold is crossed, not at week's end.
 - ✏️ Edits and clears apply to the current week only and take effect immediately.
 

@@ -231,12 +231,35 @@ function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); }
 
 function totalOf(values) { return CATS.reduce((t, c) => t + (values[c.id] || 0), 0); }
 
-/** Commit an absolute value; all-time high only ever rises (never lowered). */
+/** Commit an absolute value for the current week. All-time highs are NOT
+    touched here — they only come from weeks that have closed (see archive). */
 function commit(cat, newVal) {
   newVal = Math.max(0, Math.round(newVal));
   STATE.current[cat.id] = newVal;
-  const at = STATE.allTime[cat.id] || { value: 0, week: null };
-  if (newVal > at.value) STATE.allTime[cat.id] = { value: newVal, week: STATE.currentWeek };
+}
+
+/** Raise all-time highs from a week that has just closed. The current
+    (in-progress) week never contributes — only closed weeks in history do. */
+function updateAllTimeFromWeek(entry) {
+  CATS.forEach((cat) => {
+    const v = (entry.values && entry.values[cat.id]) || 0;
+    const at = STATE.allTime[cat.id] || { value: 0, week: null };
+    if (v > at.value) STATE.allTime[cat.id] = { value: v, week: entry.week };
+  });
+}
+
+/** Recompute all-time highs purely from the closed weeks in history. */
+function computeAllTimeFromHistory() {
+  const at = {};
+  CATS.forEach((cat) => {
+    let best = { value: 0, week: null };
+    STATE.history.forEach((h) => {
+      const v = (h.values && h.values[cat.id]) || 0;
+      if (v > best.value) best = { value: v, week: h.week };
+    });
+    if (best.value > 0) at[cat.id] = best;
+  });
+  return at;
 }
 
 /** Archive the closing week (kept if it had volume, or was explicitly cleared). */
@@ -247,6 +270,7 @@ function archive() {
   const existing = STATE.history.find((h) => h.week === STATE.currentWeek);
   if (existing) Object.assign(existing, entry);
   else STATE.history.unshift(entry);
+  updateAllTimeFromWeek(entry); // all-time highs come only from closed weeks
 }
 
 /** Roll to the current week, resetting counters at the boundary. */
@@ -658,7 +682,27 @@ function renderAllTime() {
     row.appendChild(mid); row.appendChild(valEl);
     host.appendChild(row);
   });
-  if (!any) host.innerHTML = `<p class="empty">No all-time highs yet.<br>Cross a threshold and it's recorded here — even after the week resets.</p>`;
+  if (!any) {
+    host.innerHTML = `<p class="empty">No all-time highs yet.<br>They're set when a week closes on Monday — the current week doesn't count.</p>`;
+    return;
+  }
+  const wrap = document.createElement('div');
+  wrap.className = 'clear-week';
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'text-btn'; btn.textContent = 'Clear all-time highs';
+  btn.addEventListener('click', clearAllTime);
+  wrap.appendChild(btn);
+  host.appendChild(wrap);
+}
+
+function clearAllTime() {
+  const hasAny = CATS.some((c) => (STATE.allTime[c.id] && STATE.allTime[c.id].value > 0));
+  if (!hasAny) { showToast('No all-time highs to clear', null, 1600); return; }
+  if (!confirm('Clear all all-time highs? Your week history stays.')) return;
+  const snap = snapshot();
+  STATE.allTime = {};
+  save(); renderAll();
+  showToast('All-time highs cleared', () => restore(snap), 10000);
 }
 
 function renderAll() {
@@ -953,6 +997,12 @@ document.addEventListener('keydown', (e) => {
 let STATE = loadState();
 
 (function init() {
+  // One-time migration: earlier builds tracked all-time highs live from the
+  // current week. Rebuild them from closed weeks only, then let clears persist.
+  if (!STATE.allTimeMigrated) {
+    STATE.allTime = computeAllTimeFromHistory();
+    STATE.allTimeMigrated = true;
+  }
   const didReset = ensureWeek();
   save();
   renderAll();
