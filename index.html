@@ -14,6 +14,11 @@
 <body>
   <div class="app">
 
+    <!-- top-right toggle: main app ⇄ Story Journal -->
+    <button type="button" id="journalToggle" class="journal-toggle" aria-label="Open Story Journal">
+      <span class="jt-icon" id="jtIcon">📖</span><span class="jt-label" id="jtLabel">Journal</span>
+    </button>
+
     <!-- ============ WEEK (home) ============ -->
     <section class="screen is-active" id="screen-week" data-screen="week">
       <header class="hd">
@@ -98,7 +103,50 @@
         <span class="tab-ic">📚</span><span class="tab-tx">History</span>
       </button>
     </nav>
+
+    <!-- ============ STORY JOURNAL (toggled) ============ -->
+    <section class="journal" id="journalView" hidden>
+      <header class="journal-head">
+        <h2 class="journal-title">Story Journal</h2>
+        <p class="muted">A quiet wall of wins. Pin the ones worth keeping.</p>
+      </header>
+      <button type="button" id="addStoryBtn" class="text-btn strong add-story">+ New story</button>
+      <div id="wall" class="wall"></div>
+    </section>
   </div>
+
+  <!-- Story editor sheet -->
+  <div class="sheet" id="storySheet" hidden>
+    <div class="sheet-card story-card" role="dialog" aria-modal="true" aria-labelledby="storyHeading">
+      <p class="sheet-title" id="storyHeading">New story</p>
+      <div class="story-form">
+        <label class="fld"><span>Title</span>
+          <input id="stTitle" type="text" maxlength="80" placeholder="What happened?" />
+        </label>
+        <label class="fld"><span>Price</span>
+          <div class="price-in"><span>€</span><input id="stPrice" type="number" inputmode="numeric" min="0" step="1" placeholder="—" /></div>
+        </label>
+        <label class="fld"><span>Note</span>
+          <textarea id="stDesc" rows="3" maxlength="600" placeholder="The story behind it…"></textarea>
+        </label>
+        <div class="fld"><span>Photos</span>
+          <div id="stThumbs" class="st-thumbs"></div>
+          <label class="photo-add">
+            <input id="stPhoto" type="file" accept="image/*" multiple hidden />+ Add photo
+          </label>
+        </div>
+      </div>
+      <div class="sheet-actions story-actions">
+        <button type="button" class="text-btn" id="stDelete" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="text-btn" id="stCancel">Cancel</button>
+        <button type="button" class="text-btn strong" id="stSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo lightbox -->
+  <div class="lightbox" id="lightbox" hidden><img id="lightboxImg" alt="" /></div>
 
   <!-- Total editor sheet -->
   <div class="sheet" id="editSheet" hidden>

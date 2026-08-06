@@ -66,6 +66,17 @@ Logging takes under three seconds mid-shift.
   set earlier in the week are preserved; cleared weeks are still recorded in
   history as zero weeks.
 
+## 📓 Story Journal
+
+A small, separate journal you toggle on and off with the **📖 Journal** button at
+the top-right of the app (it becomes **✕ Close** to come back). It's a quiet
+gallery wall of success stories — each note has a **title**, a **price**, a
+**description**, and any number of **photos**. Add one with *+ New story*; tap a
+card to edit or delete it; tap a photo to view it full-screen. Photos are
+downscaled in the browser before being saved, and everything lives locally
+(`localStorage`, key `acne-sales-quest-journal-v1`), separate from the weekly
+quest data.
+
 ## ⚙️ Core rules
 
 - 🗓️ Week runs **Monday 00:00 → Sunday 23:59**, local store time.

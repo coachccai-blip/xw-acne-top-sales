@@ -774,7 +774,181 @@ document.querySelectorAll('.seg-btn').forEach((b) => b.addEventListener('click',
 }));
 
 /* -------------------------------------------------------------------------
-   13. Boot
+   13. Story Journal — a small, toggle-on/off wall of success stories
+   ------------------------------------------------------------------------- */
+const JOURNAL_KEY = 'acne-sales-quest-journal-v1';
+
+function loadJournal() {
+  try { const j = JSON.parse(localStorage.getItem(JOURNAL_KEY)); return Array.isArray(j) ? j : []; }
+  catch (e) { return []; }
+}
+let JOURNAL = loadJournal();
+
+function saveJournal() {
+  try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(JOURNAL)); return true; }
+  catch (e) { showToast('Storage full — try fewer or smaller photos.', null, 3800); return false; }
+}
+
+function uid() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function fmtPrice(v) { return '€' + Math.round(+v).toLocaleString('en-US'); }
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/** Downscale + re-encode a picked image so it fits comfortably in localStorage. */
+function resizeImage(file, maxDim = 1200, quality = 0.72) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      const m = Math.max(width, height);
+      if (m > maxDim) { const s = maxDim / m; width = Math.round(width * s); height = Math.round(height * s); }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad image')); };
+    img.src = url;
+  });
+}
+
+/* ---- toggle ---- */
+const journalToggle = document.getElementById('journalToggle');
+const journalView = document.getElementById('journalView');
+
+function openJournal() {
+  document.body.classList.add('journal-mode');
+  journalView.hidden = false;
+  document.getElementById('jtIcon').textContent = '✕';
+  document.getElementById('jtLabel').textContent = 'Close';
+  journalToggle.setAttribute('aria-label', 'Close Story Journal');
+  renderWall();
+  window.scrollTo(0, 0);
+}
+function closeJournal() {
+  document.body.classList.remove('journal-mode');
+  journalView.hidden = true;
+  document.getElementById('jtIcon').textContent = '📖';
+  document.getElementById('jtLabel').textContent = 'Journal';
+  journalToggle.setAttribute('aria-label', 'Open Story Journal');
+  window.scrollTo(0, 0);
+}
+journalToggle.addEventListener('click', () => {
+  if (document.body.classList.contains('journal-mode')) closeJournal(); else openJournal();
+});
+
+/* ---- wall ---- */
+function renderWall() {
+  const wall = document.getElementById('wall');
+  wall.innerHTML = '';
+  if (!JOURNAL.length) {
+    wall.innerHTML = '<p class="wall-empty">No stories yet.<br>Pin your first win with “+ New story”.</p>';
+    return;
+  }
+  JOURNAL.forEach((note) => {
+    const card = document.createElement('article');
+    card.className = 'note';
+    let html = '';
+    if (note.photos && note.photos.length) {
+      html += `<div class="note-cover"><img src="${note.photos[0]}" alt="" loading="lazy"/>` +
+        (note.photos.length > 1 ? `<span class="note-count">${note.photos.length} photos</span>` : '') + '</div>';
+    } else {
+      html += '<div class="note-nocover">✦</div>';
+    }
+    html += '<div class="note-body">';
+    if (note.title) html += `<div class="note-title">${escapeHtml(note.title)}</div>`;
+    if (note.price !== '' && note.price != null) html += `<div class="note-price">${fmtPrice(note.price)}</div>`;
+    if (note.desc) html += `<div class="note-desc">${escapeHtml(note.desc)}</div>`;
+    html += '</div>';
+    card.innerHTML = html;
+    card.addEventListener('click', () => openStory(note));
+    wall.appendChild(card);
+  });
+}
+
+/* ---- editor ---- */
+let draft = null;
+const storySheet = document.getElementById('storySheet');
+
+function openStory(existing) {
+  draft = existing ? JSON.parse(JSON.stringify(existing)) : { id: uid(), title: '', price: '', desc: '', photos: [] };
+  document.getElementById('storyHeading').textContent = existing ? 'Story' : 'New story';
+  document.getElementById('stTitle').value = draft.title || '';
+  document.getElementById('stPrice').value = (draft.price === '' || draft.price == null) ? '' : draft.price;
+  document.getElementById('stDesc').value = draft.desc || '';
+  document.getElementById('stDelete').hidden = !existing;
+  renderThumbs();
+  storySheet.hidden = false;
+  setTimeout(() => document.getElementById('stTitle').focus(), 30);
+}
+function closeStory() { storySheet.hidden = true; draft = null; }
+
+function renderThumbs() {
+  const host = document.getElementById('stThumbs');
+  host.innerHTML = '';
+  draft.photos.forEach((src, i) => {
+    const t = document.createElement('div'); t.className = 'st-thumb';
+    const img = document.createElement('img'); img.src = src; img.alt = '';
+    img.addEventListener('click', () => openLightbox(src));
+    const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'rm'; rm.textContent = '✕';
+    rm.setAttribute('aria-label', 'Remove photo');
+    rm.addEventListener('click', (e) => { e.stopPropagation(); draft.photos.splice(i, 1); renderThumbs(); });
+    t.appendChild(img); t.appendChild(rm); host.appendChild(t);
+  });
+}
+
+document.getElementById('stPhoto').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  for (const f of files) {
+    try { draft.photos.push(await resizeImage(f)); renderThumbs(); }
+    catch (err) { showToast('Could not read that image.', null, 2600); }
+  }
+});
+
+document.getElementById('stSave').addEventListener('click', () => {
+  if (!draft) return;
+  draft.title = document.getElementById('stTitle').value.trim();
+  const p = document.getElementById('stPrice').value;
+  draft.price = (p === '' ? '' : Math.max(0, Math.round(+p)));
+  draft.desc = document.getElementById('stDesc').value.trim();
+  if (!draft.title && !draft.photos.length && !draft.desc) { closeStory(); return; }
+  const backup = JSON.stringify(JOURNAL);
+  const idx = JOURNAL.findIndex((n) => n.id === draft.id);
+  if (idx >= 0) JOURNAL[idx] = draft;
+  else { draft.created = Date.now(); JOURNAL.unshift(draft); }
+  if (saveJournal()) { closeStory(); renderWall(); }
+  else { JOURNAL = JSON.parse(backup); } // quota failed: revert, keep sheet open
+});
+
+document.getElementById('stCancel').addEventListener('click', closeStory);
+
+document.getElementById('stDelete').addEventListener('click', () => {
+  if (!draft) return;
+  if (!confirm("Delete this story? This can't be undone.")) return;
+  JOURNAL = JOURNAL.filter((n) => n.id !== draft.id);
+  saveJournal(); closeStory(); renderWall();
+});
+
+storySheet.addEventListener('click', (e) => { if (e.target === storySheet) closeStory(); });
+document.getElementById('addStoryBtn').addEventListener('click', () => openStory(null));
+
+/* ---- lightbox ---- */
+const lightbox = document.getElementById('lightbox');
+function openLightbox(src) { document.getElementById('lightboxImg').src = src; lightbox.hidden = false; }
+lightbox.addEventListener('click', () => { lightbox.hidden = true; document.getElementById('lightboxImg').src = ''; });
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (!lightbox.hidden) { lightbox.hidden = true; return; }
+  if (!storySheet.hidden) { closeStory(); }
+});
+
+/* -------------------------------------------------------------------------
+   14. Boot
    ------------------------------------------------------------------------- */
 let STATE = loadState();
 

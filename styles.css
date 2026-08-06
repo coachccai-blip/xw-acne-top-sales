@@ -383,6 +383,109 @@ details[open] .hw-chev { transform: rotate(90deg); }
   text-decoration: underline; cursor: pointer; padding: 2px 2px;
 }
 
+/* =========================================================================
+   Story Journal
+   ========================================================================= */
+.journal-toggle {
+  position: fixed; top: 14px; right: 14px; z-index: 30;
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(250,248,244,.9); backdrop-filter: blur(8px);
+  border: 1px solid var(--line-2); border-radius: 22px;
+  padding: 7px 13px; font: inherit; font-size: 12px; letter-spacing: .08em;
+  color: var(--ink); cursor: pointer;
+}
+.journal-toggle:hover { border-color: var(--ink); }
+.jt-icon { font-size: 14px; line-height: 1; }
+
+/* toggling: hide the main app, show the journal */
+body.journal-mode .screen,
+body.journal-mode .tabbar { display: none !important; }
+
+.journal { animation: fade .35s ease both; padding-bottom: 20px; }
+.journal-head { padding: 6px 0 18px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+.journal-title { font-size: 22px; letter-spacing: .1em; text-transform: uppercase; }
+.journal-head p { margin: 6px 0 0; font-size: 13px; }
+.add-story { display: inline-block; margin: 0 0 22px; }
+
+/* gallery wall (masonry) */
+.wall { column-count: 2; column-gap: 14px; }
+@media (max-width: 360px) { .wall { column-count: 1; } }
+.note {
+  break-inside: avoid; margin: 0 0 14px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--paper);
+  transition: border-color .2s ease;
+}
+.note:hover { border-color: var(--line-2); }
+.note-cover { position: relative; width: 100%; display: block; }
+.note-cover img { width: 100%; display: block; }
+.note-count {
+  position: absolute; right: 8px; bottom: 8px;
+  background: rgba(22,21,15,.72); color: var(--paper);
+  font-size: 10px; letter-spacing: .06em; padding: 3px 7px; border-radius: 11px;
+}
+.note-nocover {
+  height: 84px; display: grid; place-items: center;
+  color: var(--line-2); font-size: 24px; border-bottom: 1px solid var(--line);
+}
+.note-body { padding: 12px 13px 14px; }
+.note-title { font-size: 14px; font-weight: 600; letter-spacing: .02em; line-height: 1.3; }
+.note-price {
+  font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+  margin-top: 5px;
+}
+.note-desc {
+  font-size: 12px; color: var(--ink-2); line-height: 1.45; margin-top: 6px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.wall-empty { color: var(--ink-2); font-size: 13px; line-height: 1.6; padding: 30px 0; text-align: center; }
+
+/* story editor */
+.story-card { max-width: 380px; max-height: 86vh; overflow-y: auto; }
+.story-form { display: flex; flex-direction: column; gap: 16px; margin-bottom: 22px; }
+.fld { display: flex; flex-direction: column; gap: 7px; }
+.fld > span {
+  font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2);
+}
+.fld input[type="text"], .fld textarea, .price-in input {
+  font: inherit; font-size: 15px; color: var(--ink);
+  border: none; border-bottom: 1px solid var(--line-2); background: none;
+  padding: 6px 2px; width: 100%; resize: vertical;
+}
+.fld input:focus, .fld textarea:focus, .price-in input:focus {
+  outline: none; border-bottom-color: var(--ink);
+}
+.price-in { display: flex; align-items: baseline; gap: 6px; border-bottom: 1px solid var(--line-2); }
+.price-in:focus-within { border-bottom-color: var(--ink); }
+.price-in span { color: var(--ink-2); font-size: 15px; }
+.price-in input { border: none; }
+
+.st-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-thumb { position: relative; width: 62px; height: 62px; border: 1px solid var(--line); }
+.st-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+.st-thumb .rm {
+  position: absolute; top: -7px; right: -7px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--ink); color: var(--paper); border: none; cursor: pointer;
+  font-size: 12px; line-height: 1; display: grid; place-items: center;
+}
+.photo-add {
+  align-self: flex-start; margin-top: 10px; cursor: pointer;
+  border: 1px dashed var(--line-2); border-radius: 20px;
+  padding: 8px 14px; font-size: 12px; letter-spacing: .04em; color: var(--ink-2);
+}
+.photo-add:hover { border-color: var(--ink); color: var(--ink); }
+.story-actions { align-items: center; }
+.story-actions .spacer { flex: 1; }
+.story-actions .text-btn { margin-left: 14px; }
+.text-btn.danger-quiet { border-bottom-color: var(--line-2); color: var(--ink-2); }
+.text-btn.danger-quiet:hover { color: var(--ink); opacity: 1; }
+
+/* lightbox */
+.lightbox {
+  position: fixed; inset: 0; z-index: 60; background: rgba(22,21,15,.9);
+  display: grid; place-items: center; padding: 24px; cursor: zoom-out; animation: fade .2s ease both;
+}
+.lightbox img { max-width: 100%; max-height: 100%; display: block; }
+
 @media (max-width: 380px) {
   .app { padding-left: 16px; padding-right: 16px; }
   .tr-scroll { margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
