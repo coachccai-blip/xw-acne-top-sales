@@ -27,7 +27,7 @@ const CATS = [
     id: 'sales', name: 'Sales Amount', animal: 'Peacock', emoji: '🦚',
     unit: '', money: true,
     tag: 'Struts, fans the tail, closes.',
-    thresholds: [0, 2000, 4500, 6250, 10000],
+    thresholds: [0, 500, 4500, 6250, 10000],
   },
   {
     id: 'bag', name: 'Suggest a Bag', animal: 'Kangaroo', emoji: '🦘',

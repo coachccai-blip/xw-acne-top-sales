@@ -27,7 +27,7 @@ Five levels, identical across all six categories.
 
 | Category | Animal | Baxbax | Shibshib | Warrior | Elite |
 |----------|--------|-------:|---------:|--------:|------:|
-| 💰 Sales Amount | 🦚 Peacock | €2,000 | €4,500 | €6,250 | €10,000 |
+| 💰 Sales Amount | 🦚 Peacock | €500 | €4,500 | €6,250 | €10,000 |
 | 👜 Suggest a Bag | 🦘 Kangaroo | 1 | 6 | 15 | 30 |
 | 🧥 Suggest a Match | 🐦 Lovebird | 1 | 6 | 15 | 30 |
 | 🤝 Help a Colleague | 🦫 Meerkat | 1 | 6 | 15 | 30 |
