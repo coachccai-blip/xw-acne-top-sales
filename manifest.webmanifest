@@ -1,24 +1,18 @@
 {
-  "name": "Hyrox Journal",
-  "short_name": "Hyrox",
-  "description": "Journal d'entraînement Hyrox gamifié : titres hebdomadaires, diagramme d'araignée et records all-time.",
+  "name": "Acne Studios — Sales Quest",
+  "short_name": "Sales Quest",
+  "description": "A quiet, gamified sales journal for the shop floor. Log what you do; the week turns it into animal titles. Everything resets Monday morning.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0b0f1a",
-  "theme_color": "#0b0f1a",
+  "background_color": "#FAF8F4",
+  "theme_color": "#FAF8F4",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]

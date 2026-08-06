@@ -1,80 +1,111 @@
-# 🏆 Hyrox Journal — Journal d'entraînement gamifié
+# 🦌 Acne Studios — Sales Quest
 
-Application web **100 % statique** (aucun serveur, aucune base de données, aucun build) :
-un journal d'exercices gamifié qui se **réinitialise chaque semaine**, garde l'**historique**
-des semaines passées et met en avant tes **records all-time**.
+A **gamified sales journal for the shop floor**. You log what you do during the
+week; the app turns it into animal titles. Everything resets **Monday morning** —
+titles are earned weekly, never owned. A browsable history keeps every past week,
+and all-time highscores are flagged per category.
 
-## ✨ Fonctionnalités
+Tone: deadpan, Scandinavian, lightly absurd. The app never shouts. It just quietly
+informs you that you are, this week, a **Sleepy Moose**. 😴
 
-- **Saisie hebdomadaire** de ton volume pour 5 catégories : Burpees, Wallballs, Fentes chargées, Course, Gainage.
-  Pour chaque exercice, deux boutons distincts :
-  - **Ajouter à la semaine en cours** — cumule la valeur saisie au total de la semaine.
-  - **Écraser les données de la semaine** — remplace le total de la semaine par la valeur saisie.
-- **Réinitialisation automatique chaque lundi** (semaine ISO). Le volume de la semaine écoulée est archivé.
-- **Historique consultable** de chaque semaine passée, avec le titre atteint dans chaque catégorie.
-- **Records all-time** par catégorie : recalculés comme le **plus haut volume atteint** sur toutes les
-  semaines connues (semaine en cours **ou** semaines passées), donc toujours justes même après un écrasement.
-- **Titres gamifiés** débloqués (et re-débloqués chaque semaine) selon le volume réalisé :
-  - 🐱 Burpees → *Chaton* (endormi → paresseux → motivé → de compétition → survolté → de guerre → d'élite)
-  - 🦍 Wallballs → *Gorille*
-  - 🦙 Fentes chargées → *Lama*
-  - 🐆 Course → *Guépard*
-  - 🐢 Gainage → *Tortue*
-- **Diagramme d'araignée** (radar) de ton volume face aux 6 paliers (*paresseux* → *élite*).
-- **Jauges de progression** vers l'objectif suivant pour chaque exercice.
-- **Badges** avec l'animal de la catégorie, dont le **fond change selon le niveau** :
-  blanc (endormi), jaune (paresseux), vert (motivé), bleu (compétition), rouge (survolté),
-  noir (de guerre), violet (d'élite).
-- **Galerie des titres** défilable : les titres débloqués sont en couleur, ceux encore à
-  débloquer sont grisés avec un petit 🔒.
+It's a **100% static** web app — no server, no database, no build step. All data
+lives in the browser (`localStorage`).
 
-## 🚀 Déploiement sur Netlify
+## 🪜 Tiers
 
-### Option 1 — Glisser-déposer (le plus simple)
-1. Va sur **https://app.netlify.com/drop**
-2. Glisse-dépose **le dossier complet** (celui qui contient `index.html`).
-3. C'est en ligne. 🎉
+Five levels, identical across all six categories.
 
-### Option 2 — Depuis Git
-1. Connecte ce dépôt à Netlify (New site from Git).
-2. Laisse le **build command vide** et le **publish directory** sur `.` (déjà configuré dans `netlify.toml`).
-3. Déploie.
+| Tier | Badge background |
+|------|------------------|
+| 😴 Sleepy | Off-white `#F4F2EE` |
+| 🌼 Baxbax | Butter yellow `#F5E6A8` |
+| 🌿 Shibshib | Sage green `#C7D9C0` |
+| 💧 Warrior | Powder blue `#BBD1E3` |
+| 🔮 Elite | Soft lilac `#D3C6E0` |
+
+## 🎯 Categories & thresholds
+
+| Category | Animal | Baxbax | Shibshib | Warrior | Elite |
+|----------|--------|-------:|---------:|--------:|------:|
+| 💰 Sales Amount | 🦚 Peacock | €2,000 | €8,000 | €18,000 | €30,000 |
+| 👜 Suggest a Bag | 🦘 Kangaroo | 10 | 30 | 60 | 100 |
+| 🧥 Suggest a Match | 🐦 Lovebird | 15 | 40 | 80 | 130 |
+| 🤝 Help a Colleague | 🦫 Meerkat | 5 | 15 | 30 | 55 |
+| 🔍 Provide Details | 🦉 Owl | 20 | 55 | 110 | 180 |
+| 📖 Tell the Acne Story | 🫎 Moose | 8 | 25 | 50 | 90 |
+
+Sleepy is always 0 — the start of every week.
+
+## 📱 Screens
+
+- **🕸️ Week (home)** — a radar chart (six axes, four rings), the current week
+  number and a live countdown to Monday reset, the logging list, and a quiet
+  *Clear week* action at the bottom.
+- **📊 Progress** — one thin bar per category showing distance to the *next*
+  title only. *"12 more bags and you leave Shibshib Kangaroo behind."*
+- **🎖️ Titles** — swipe horizontally through the five titles of the week per
+  category. Unlocked badges are in colour; locked ones are grey with a 🔒.
+  Tap a locked badge to see exactly what's still required.
+- **📚 History** — every past week, most recent first, each row showing its six
+  final titles. Open a week for its full radar and numbers. A dedicated
+  **All-time 👑** view summarises personal bests per category.
+
+## ✍️ Logging & corrections
+
+Logging takes under three seconds mid-shift.
+
+- **➕ Shortcut add** — a large `+` per category. One tap, one unit.
+- **💶 Sales Amount** — an *Add €* field: type a figure, tap add, and it's summed
+  into the running weekly total (which is always shown above).
+- **✏️ Edit the total** — tap-and-hold the counter, or use the small pencil, to
+  open a numeric input pre-filled with the current value. Saving replaces the
+  total outright and recalculates instantly.
+- **↩️ Undo** — a short-lived undo appears after every add.
+- **🧹 Clear week** — zeroes all six counters for the current week only (history
+  untouched). Asks once, quietly, with a ~10-second undo window. All-time highs
+  set earlier in the week are preserved; cleared weeks are still recorded in
+  history as zero weeks.
+
+## ⚙️ Core rules
+
+- 🗓️ Week runs **Monday 00:00 → Sunday 23:59**, local store time.
+- 🔄 All counters reset to zero at the boundary; titles recalculated from zero.
+- 🔒 History is immutable once a week closes.
+- 👑 All-time highscores persist across resets, tracked per category.
+- ⚡ A title unlocks the moment its threshold is crossed, not at week's end.
+- ✏️ Edits and clears apply to the current week only and take effect immediately.
+
+*Elite Moose is not a permanent condition. That's the point.* 🫎
+
+## 🎨 Design
+
+Pure and quiet. Off-white ground, near-black ink, and the five tier colours used
+exclusively on badges and progress fills — nothing else is coloured. One grotesque
+sans in two weights, wide letter-spacing on titles. Animals are single-weight line
+drawings: no fills, no shading. Motion is minimal; a badge unlocking fades slowly
+from grey to colour. Destructive actions are near-black text buttons, never red.
+
+## 🚀 Deploy on Netlify
+
+Static site, no build.
+
+1. **Drag & drop** — go to <https://app.netlify.com/drop> and drop the folder
+   containing `index.html`.
+2. **From Git** — connect the repo, leave the build command empty and publish
+   directory `.` (already set in `netlify.toml`).
 
 ## 🗂️ Structure
 
 ```
-index.html     # structure de la page
-styles.css     # thème sombre, badges, radar, jauges...
-app.js         # logique : paliers, titres, semaine ISO, persistance localStorage
-logo.png       # logo de l'app (en-tête + favicon) — à déposer ici
-netlify.toml   # config Netlify (site statique, publish = ".")
+index.html              # screens + bottom nav
+styles.css              # off-white theme, badges, radar, gauges
+app.js                  # tiers, thresholds, week logic, localStorage
+icon.svg                # app icon / favicon (line-drawn moose)
+manifest.webmanifest    # PWA metadata
+netlify.toml            # static hosting config
 ```
 
-## 🖼️ Logo & icône d'application
+## 💾 Data
 
-- **`logo.png`** (racine, à côté de `index.html`) : logo affiché dans l'en-tête.
-  Si le fichier est absent, l'app affiche un emoji 🐱 de secours — rien n'est cassé.
-- **`icon-192.png` et `icon-512.png`** : icônes utilisées comme **favicon** (onglet)
-  et comme **icône d'application au téléchargement/installation** (Ajouter à l'écran
-  d'accueil / PWA), déclarées dans `manifest.webmanifest`.
-
-Pour changer le logo/l'icône : remplace `logo.png` par ta nouvelle image (carrée,
-idéalement 512×512 px), puis régénère les deux icônes aux bonnes tailles
-(`icon-192.png`, `icon-512.png`) à partir de ce même visuel.
-
-## 💾 Données
-
-Tout est stocké **localement dans le navigateur** (`localStorage`, clé `hyrox-journal-v1`).
-Aucune donnée n'est envoyée sur un serveur. Les données sont donc propres à chaque appareil/navigateur.
-
-## 🎯 Paliers (seuils par titre)
-
-| Catégorie | Unité | paresseux | motivé | compétition | survolté | de guerre | d'élite |
-|-----------|-------|-----------|--------|-------------|----------|-----------|---------|
-| Burpees   | reps  | 30  | 100 | 150 | 200 | 300 | 400 |
-| Wallballs | reps  | 30  | 100 | 150 | 200 | 300 | 400 |
-| Fentes    | reps  | 40  | 100 | 200 | 300 | 400 | 600 |
-| Course    | km    | 5   | 15  | 25  | 40  | 50  | 60  |
-| Gainage   | s     | 180 | 360 | 440 | 720 | 900 | 1200 |
-
-Le niveau « endormi » correspond à 0 (départ de chaque semaine).
+Everything is stored locally in the browser (`localStorage`, key
+`acne-sales-quest-v1`). Nothing is sent to a server, so data is per-device.
