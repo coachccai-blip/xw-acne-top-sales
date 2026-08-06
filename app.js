@@ -27,37 +27,37 @@ const CATS = [
     id: 'sales', name: 'Sales Amount', animal: 'Peacock', emoji: '🦚',
     unit: '', money: true,
     tag: 'Struts, fans the tail, closes.',
-    thresholds: [0, 2000, 8000, 18000, 30000],
+    thresholds: [0, 2000, 4500, 6250, 10000],
   },
   {
     id: 'bag', name: 'Suggest a Bag', animal: 'Kangaroo', emoji: '🦘',
     unit: 'bags',
     tag: 'Comes with a pouch. Was born for this.',
-    thresholds: [0, 10, 30, 60, 100],
+    thresholds: [0, 1, 6, 15, 30],
   },
   {
     id: 'match', name: 'Suggest a Match', animal: 'Lovebird', emoji: '🐦',
     unit: 'pairings',
     tag: "Refuses to let a jacket leave alone.",
-    thresholds: [0, 15, 40, 80, 130],
+    thresholds: [0, 1, 6, 15, 30],
   },
   {
     id: 'help', name: 'Help a Colleague', animal: 'Meerkat', emoji: '🦫',
     unit: 'assists',
     tag: 'Permanently on lookout duty for the pack.',
-    thresholds: [0, 5, 15, 30, 55],
+    thresholds: [0, 1, 6, 15, 30],
   },
   {
     id: 'details', name: 'Provide Details', animal: 'Owl', emoji: '🦉',
     unit: 'details',
     tag: 'Knows the fabric weight, the fit, the wash instructions.',
-    thresholds: [0, 20, 55, 110, 180],
+    thresholds: [0, 1, 6, 15, 30],
   },
   {
     id: 'story', name: 'Tell the Acne Story', animal: 'Moose', emoji: '🫎',
     unit: 'stories',
     tag: 'The Nordic bard. Stockholm, 1996, one hundred pairs of raw denim.',
-    thresholds: [0, 8, 25, 50, 90],
+    thresholds: [0, 1, 6, 15, 30],
   },
 ];
 

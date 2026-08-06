@@ -27,12 +27,12 @@ Five levels, identical across all six categories.
 
 | Category | Animal | Baxbax | Shibshib | Warrior | Elite |
 |----------|--------|-------:|---------:|--------:|------:|
-| 💰 Sales Amount | 🦚 Peacock | €2,000 | €8,000 | €18,000 | €30,000 |
-| 👜 Suggest a Bag | 🦘 Kangaroo | 10 | 30 | 60 | 100 |
-| 🧥 Suggest a Match | 🐦 Lovebird | 15 | 40 | 80 | 130 |
-| 🤝 Help a Colleague | 🦫 Meerkat | 5 | 15 | 30 | 55 |
-| 🔍 Provide Details | 🦉 Owl | 20 | 55 | 110 | 180 |
-| 📖 Tell the Acne Story | 🫎 Moose | 8 | 25 | 50 | 90 |
+| 💰 Sales Amount | 🦚 Peacock | €2,000 | €4,500 | €6,250 | €10,000 |
+| 👜 Suggest a Bag | 🦘 Kangaroo | 1 | 6 | 15 | 30 |
+| 🧥 Suggest a Match | 🐦 Lovebird | 1 | 6 | 15 | 30 |
+| 🤝 Help a Colleague | 🦫 Meerkat | 1 | 6 | 15 | 30 |
+| 🔍 Provide Details | 🦉 Owl | 1 | 6 | 15 | 30 |
+| 📖 Tell the Acne Story | 🫎 Moose | 1 | 6 | 15 | 30 |
 
 Sleepy is always 0 — the start of every week.
 
