@@ -876,6 +876,12 @@ function saveJournal() {
 
 function uid() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function fmtPrice(v) { return '€' + Math.round(+v).toLocaleString('en-US'); }
+/** Story price: up to two decimals, e.g. €20.89 — but €1,240 for round amounts. */
+function fmtStoryPrice(v) {
+  const n = +v;
+  const opts = Number.isInteger(n) ? {} : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  return '€' + n.toLocaleString('en-US', opts);
+}
 /** Today as a local YYYY-MM-DD string (for <input type="date">). */
 function todayISO() {
   const d = new Date();
@@ -937,6 +943,20 @@ journalToggle.addEventListener('click', () => {
 });
 
 /* ---- wall ---- */
+let journalQuery = '';
+
+/** Newest first by the note's own date; undated notes fall to the bottom,
+    ties broken by creation time. */
+function sortedJournal() {
+  return JOURNAL.slice().sort((a, b) => {
+    const da = a.date || '', db = b.date || '';
+    if (da && db) { if (da > db) return -1; if (da < db) return 1; }
+    else if (da && !db) return -1;
+    else if (!da && db) return 1;
+    return (b.created || 0) - (a.created || 0);
+  });
+}
+
 function renderWall() {
   const wall = document.getElementById('wall');
   wall.innerHTML = '';
@@ -944,7 +964,21 @@ function renderWall() {
     wall.innerHTML = '<p class="wall-empty">No stories yet.<br>Pin your first win with “+ New story”.</p>';
     return;
   }
-  JOURNAL.forEach((note) => {
+  const q = journalQuery.trim().toLowerCase();
+  let list = sortedJournal();
+  if (q) {
+    list = list.filter((n) => {
+      const title = (n.title || '').toLowerCase();
+      const iso = (n.date || '').toLowerCase();          // e.g. "2026-08-05"
+      const disp = fmtStoryDate(n.date).toLowerCase();   // e.g. "aug 5, 2026"
+      return title.includes(q) || iso.includes(q) || disp.includes(q);
+    });
+  }
+  if (!list.length) {
+    wall.innerHTML = `<p class="wall-empty">No stories match “${escapeHtml(journalQuery.trim())}”.</p>`;
+    return;
+  }
+  list.forEach((note) => {
     const card = document.createElement('article');
     card.className = 'note';
     let html = '';
@@ -957,7 +991,7 @@ function renderWall() {
     html += '<div class="note-body">';
     if (note.date) html += `<div class="note-date">${escapeHtml(fmtStoryDate(note.date))}</div>`;
     if (note.title) html += `<div class="note-title">${escapeHtml(note.title)}</div>`;
-    if (note.price !== '' && note.price != null) html += `<div class="note-price">${fmtPrice(note.price)}</div>`;
+    if (note.price !== '' && note.price != null) html += `<div class="note-price">${fmtStoryPrice(note.price)}</div>`;
     if (note.desc) html += `<div class="note-desc">${escapeHtml(note.desc)}</div>`;
     html += '</div>';
     card.innerHTML = html;
@@ -971,12 +1005,16 @@ let draft = null;
 const storySheet = document.getElementById('storySheet');
 
 function openStory(existing) {
-  draft = existing ? JSON.parse(JSON.stringify(existing)) : { id: uid(), title: '', date: todayISO(), price: '', desc: '', photos: [] };
+  draft = existing ? JSON.parse(JSON.stringify(existing))
+    : { id: uid(), title: '', date: todayISO(), price: '', mood: '', desc: '', didWell: '', improve: '', photos: [] };
   document.getElementById('storyHeading').textContent = existing ? 'Story' : 'New story';
   document.getElementById('stTitle').value = draft.title || '';
   document.getElementById('stDate').value = draft.date || '';
   document.getElementById('stPrice').value = (draft.price === '' || draft.price == null) ? '' : draft.price;
+  document.getElementById('stMood').value = draft.mood || '';
   document.getElementById('stDesc').value = draft.desc || '';
+  document.getElementById('stWell').value = draft.didWell || '';
+  document.getElementById('stImprove').value = draft.improve || '';
   document.getElementById('stDelete').hidden = !existing;
   renderThumbs();
   storySheet.hidden = false;
@@ -1012,9 +1050,14 @@ document.getElementById('stSave').addEventListener('click', () => {
   draft.title = document.getElementById('stTitle').value.trim();
   draft.date = document.getElementById('stDate').value || '';
   const p = document.getElementById('stPrice').value;
-  draft.price = (p === '' ? '' : Math.max(0, Math.round(+p)));
+  draft.price = (p === '' ? '' : Math.max(0, Math.round(+p * 100) / 100));
+  draft.mood = document.getElementById('stMood').value.trim();
   draft.desc = document.getElementById('stDesc').value.trim();
-  if (!draft.title && !draft.photos.length && !draft.desc) { closeStory(); return; }
+  draft.didWell = document.getElementById('stWell').value.trim();
+  draft.improve = document.getElementById('stImprove').value.trim();
+  const hasContent = draft.title || draft.desc || draft.photos.length ||
+    draft.mood || draft.didWell || draft.improve || draft.price !== '';
+  if (!hasContent) { closeStory(); return; }
   const backup = JSON.stringify(JOURNAL);
   const idx = JOURNAL.findIndex((n) => n.id === draft.id);
   if (idx >= 0) JOURNAL[idx] = draft;
@@ -1034,6 +1077,10 @@ document.getElementById('stDelete').addEventListener('click', () => {
 
 storySheet.addEventListener('click', (e) => { if (e.target === storySheet) closeStory(); });
 document.getElementById('addStoryBtn').addEventListener('click', () => openStory(null));
+document.getElementById('journalSearch').addEventListener('input', (e) => {
+  journalQuery = e.target.value || '';
+  renderWall();
+});
 
 /* ---- lightbox ---- */
 const lightbox = document.getElementById('lightbox');

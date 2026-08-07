@@ -431,7 +431,15 @@ body.journal-mode .tabbar { display: none !important; }
 .journal-head { padding: 6px 0 18px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
 .journal-title { font-size: 22px; letter-spacing: .1em; text-transform: uppercase; }
 .journal-head p { margin: 6px 0 0; font-size: 13px; }
-.add-story { display: inline-block; margin: 0 0 22px; }
+.journal-tools { display: flex; flex-direction: column; gap: 14px; margin: 0 0 22px; }
+.add-story { display: inline-block; align-self: flex-start; margin: 0; }
+.journal-search {
+  width: 100%; font: inherit; font-size: 14px; color: var(--ink);
+  border: none; border-bottom: 1px solid var(--line-2); background: none;
+  padding: 9px 2px;
+}
+.journal-search::placeholder { color: var(--ink-2); }
+.journal-search:focus { outline: none; border-bottom-color: var(--ink); }
 
 /* gallery wall (masonry) */
 .wall { column-count: 2; column-gap: 14px; }

@@ -120,7 +120,10 @@
         <h2 class="journal-title">Story Journal</h2>
         <p class="muted">A quiet wall of wins. Pin the ones worth keeping.</p>
       </header>
-      <button type="button" id="addStoryBtn" class="text-btn strong add-story">+ New story</button>
+      <div class="journal-tools">
+        <button type="button" id="addStoryBtn" class="text-btn strong add-story">+ New story</button>
+        <input id="journalSearch" class="journal-search" type="search" placeholder="Search by title or date" aria-label="Search stories" />
+      </div>
       <div id="wall" class="wall"></div>
     </section>
   </div>
@@ -137,10 +140,19 @@
           <input id="stDate" type="date" />
         </label>
         <label class="fld"><span>Price</span>
-          <div class="price-in"><span>€</span><input id="stPrice" type="number" inputmode="numeric" min="0" step="1" placeholder="—" /></div>
+          <div class="price-in"><span>€</span><input id="stPrice" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" /></div>
+        </label>
+        <label class="fld"><span>Mood</span>
+          <input id="stMood" type="text" placeholder="How did you feel that day?" />
         </label>
         <label class="fld"><span>Note</span>
-          <textarea id="stDesc" rows="3" maxlength="600" placeholder="The story behind it…"></textarea>
+          <textarea id="stDesc" rows="3" placeholder="The story behind it…"></textarea>
+        </label>
+        <label class="fld"><span>What I did well</span>
+          <textarea id="stWell" rows="2" placeholder="The good moves…"></textarea>
+        </label>
+        <label class="fld"><span>What can be improved</span>
+          <textarea id="stImprove" rows="2" placeholder="Next time…"></textarea>
         </label>
         <div class="fld"><span>Photos</span>
           <div id="stThumbs" class="st-thumbs"></div>

@@ -73,13 +73,15 @@ Logging takes under three seconds mid-shift.
 
 A small, separate journal you toggle on and off with the **📖 Journal** button at
 the top-right of the app (it becomes **✕ Close** to come back). It's a quiet
-gallery wall of success stories — each note has a **title**, a **date** (shown on
-the card), a **price**, a **description**, and any number of **photos**. Add one
-with *+ New story*; tap a card to edit or delete it; tap a photo to view it
-full-screen. Photos are
-downscaled in the browser before being saved, and everything lives locally
-(`localStorage`, key `acne-sales-quest-journal-v1`), separate from the weekly
-quest data.
+gallery wall of success stories. Each note has a **title**, a **date**, a
+**price** (decimals allowed, e.g. €20.89), a free-length **note**, a **mood**,
+**what I did well**, **what can be improved**, and any number of **photos**.
+Cards are sorted **newest date first** and show the date, title, price and a
+3-line preview of the note (long notes never break the layout). A **search**
+field filters by title or date. Add a story with *+ New story*; tap a card to
+edit or delete it; tap a photo to view it full-screen. Photos are downscaled in
+the browser before being saved, and everything lives locally (`localStorage`,
+key `acne-sales-quest-journal-v1`), separate from the weekly quest data.
 
 ## ⚙️ Core rules
 
