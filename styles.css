@@ -305,6 +305,32 @@ h1, h2 { font-weight: 600; margin: 0; }
 .hw-badges .badge svg { width: 62%; height: 62%; }
 .hw-chev { color: var(--ink-2); transition: transform .25s ease; font-size: 13px; }
 details[open] .hw-chev { transform: rotate(90deg); }
+.hw-edit {
+  border: none; background: none; color: var(--ink-2);
+  font-size: 14px; line-height: 1; padding: 4px 6px; cursor: pointer;
+}
+.hw-edit:hover { color: var(--ink); }
+.add-week { display: inline-block; margin: 0 0 20px; }
+
+/* past-week editor */
+.week-card { max-width: 380px; max-height: 86vh; overflow-y: auto; }
+.week-label { font-weight: 600; color: var(--ink); }
+.week-resolved { margin: 8px 0 0; font-size: 12px; color: var(--ink-2); letter-spacing: .02em; }
+.week-fields { display: flex; flex-direction: column; gap: 15px; margin: 16px 0 22px; }
+.wk-row { display: flex; flex-direction: column; gap: 6px; }
+.wk-row > span { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+.wk-in { display: flex; align-items: baseline; gap: 6px; border-bottom: 1px solid var(--line-2); }
+.wk-in:focus-within { border-bottom-color: var(--ink); }
+.wk-in .pfx, .wk-in .sfx { color: var(--ink-2); font-size: 14px; }
+.wk-in input {
+  flex: 1; min-width: 0; font: inherit; font-size: 16px; color: var(--ink);
+  border: none; background: none; padding: 6px 2px; font-variant-numeric: tabular-nums;
+}
+.wk-in input:focus { outline: none; }
+.week-actions { align-items: center; }
+.week-actions .spacer { flex: 1; }
+.week-actions .text-btn { margin-left: 14px; }
+
 .hw-open { padding: 4px 0 22px; }
 .hw-radar { max-width: 300px; margin: 0 auto 18px; }
 .hw-radar svg { width: 100%; height: auto; }

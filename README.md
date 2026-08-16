@@ -50,8 +50,9 @@ Sleepy is always 0 — the start of every week.
   category. Unlocked badges are in colour; locked ones are grey with a 🔒.
   Tap a locked badge to see exactly what's still required.
 - **📚 History** — every past week, most recent first, each row showing its six
-  final titles. Open a week for its full radar and numbers. A dedicated
-  **All-time 👑** view summarises personal bests per category.
+  final titles. Open a week for its full radar and numbers, or tap its ✎ pencil
+  to correct the six totals; *+ Add a past week* logs a forgotten week (past
+  only). A dedicated **All-time 👑** view summarises personal bests per category.
 
 ## ✍️ Logging & corrections
 
@@ -87,7 +88,11 @@ key `acne-sales-quest-journal-v1`), separate from the weekly quest data.
 
 - 🗓️ Week runs **Monday 00:00 → Sunday 23:59**, local store time.
 - 🔄 All counters reset to zero at the boundary; titles recalculated from zero.
-- 🔒 History is immutable once a week closes.
+- 📝 History can be **corrected**: edit any past week with its ✎ pencil, or
+  **add a forgotten past week** via *+ Add a past week* — past weeks only (never
+  the current or a future week; the date picker is capped and the save is
+  guarded). All-time highs and the monthly total recompute from the corrected
+  history; every field stays editable with a short-lived undo.
 - 👑 All-time highscores are taken **only from closed weeks** in the history —
   the current, in-progress week never counts. They can be wiped with a
   *Clear all-time highs* button on the All-time screen (the week history stays).

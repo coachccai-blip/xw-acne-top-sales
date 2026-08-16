@@ -94,6 +94,7 @@
         <button type="button" class="seg-btn is-on" data-view="weeks" role="tab">Weeks</button>
         <button type="button" class="seg-btn" data-view="alltime" role="tab">All-time 👑</button>
       </div>
+      <button type="button" id="addWeekBtn" class="text-btn strong add-week">+ Add a past week</button>
       <div id="historyWeeks" class="history"></div>
       <div id="historyAlltime" class="alltime" hidden></div>
     </section>
@@ -166,6 +167,26 @@
         <span class="spacer"></span>
         <button type="button" class="text-btn" id="stCancel">Cancel</button>
         <button type="button" class="text-btn strong" id="stSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Past-week editor sheet (edit a closed week, or add a forgotten one) -->
+  <div class="sheet" id="weekSheet" hidden>
+    <div class="sheet-card week-card" role="dialog" aria-modal="true" aria-labelledby="weekHeading">
+      <p class="sheet-title" id="weekHeading">Edit week</p>
+      <p class="sheet-sub week-label" id="weekLabelStatic" hidden>—</p>
+      <div class="fld" id="weekPickWrap" hidden>
+        <span>Week — pick any day of it</span>
+        <input id="weekDate" type="date" />
+        <p class="week-resolved" id="weekResolved">—</p>
+      </div>
+      <div class="week-fields" id="weekFields"></div>
+      <div class="sheet-actions week-actions">
+        <button type="button" class="text-btn danger-quiet" id="weekDelete" hidden>Delete week</button>
+        <span class="spacer"></span>
+        <button type="button" class="text-btn" id="weekCancel">Cancel</button>
+        <button type="button" class="text-btn strong" id="weekSave">Save</button>
       </div>
     </div>
   </div>

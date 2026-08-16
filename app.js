@@ -293,11 +293,12 @@ function ensureWeek() {
 
 /* ---- Undo snapshots ---- */
 function snapshot() {
-  return JSON.stringify({ current: STATE.current, allTime: STATE.allTime, cleared: STATE.cleared });
+  return JSON.stringify({ current: STATE.current, allTime: STATE.allTime, cleared: STATE.cleared, history: STATE.history });
 }
 function restore(snap) {
   const s = JSON.parse(snap);
   STATE.current = s.current; STATE.allTime = s.allTime; STATE.cleared = s.cleared;
+  if (s.history) STATE.history = s.history;
   save(); renderAll();
   showToast('Reverted', null, 1800);
 }
@@ -665,8 +666,12 @@ function renderHistory() {
       const lvl = levelIndexFor(h.values[cat.id] || 0, cat.thresholds);
       badges.appendChild(badgeEl(cat, lvl));
     });
+    const edit = document.createElement('button');
+    edit.type = 'button'; edit.className = 'hw-edit'; edit.textContent = '✎';
+    edit.setAttribute('aria-label', `Edit ${weekLabel(h.week)}`);
+    edit.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openWeekEditor(h.week); });
     const chev = document.createElement('span'); chev.className = 'hw-chev'; chev.textContent = '›';
-    sum.appendChild(when); sum.appendChild(badges); sum.appendChild(chev);
+    sum.appendChild(when); sum.appendChild(badges); sum.appendChild(edit); sum.appendChild(chev);
     det.appendChild(sum);
 
     const open = document.createElement('div');
@@ -856,7 +861,136 @@ document.querySelectorAll('.seg-btn').forEach((b) => b.addEventListener('click',
   const weeks = b.dataset.view === 'weeks';
   document.getElementById('historyWeeks').hidden = !weeks;
   document.getElementById('historyAlltime').hidden = weeks;
+  document.getElementById('addWeekBtn').hidden = !weeks;
 }));
+
+/* -------------------------------------------------------------------------
+   12b. History editor — correct a past week, or add a forgotten one
+        (past weeks only; the current week is edited on the Week screen)
+   ------------------------------------------------------------------------- */
+const weekSheet = document.getElementById('weekSheet');
+let weekAdding = false;
+let editingWeekKey = null;
+
+function isoLocal(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function parseLocalDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+
+function renderWeekFields(values) {
+  const host = document.getElementById('weekFields');
+  host.innerHTML = '';
+  CATS.forEach((cat) => {
+    const row = document.createElement('label');
+    row.className = 'wk-row';
+    const lab = document.createElement('span');
+    lab.textContent = `${cat.emoji} ${cat.name}`;
+    const wrap = document.createElement('div');
+    wrap.className = 'wk-in';
+    if (cat.money) { const p = document.createElement('span'); p.className = 'pfx'; p.textContent = '€'; wrap.appendChild(p); }
+    const input = document.createElement('input');
+    input.type = 'number'; input.inputMode = 'numeric'; input.min = '0'; input.step = '1';
+    input.id = 'wk_' + cat.id;
+    input.value = String(Math.round((values && values[cat.id]) || 0));
+    input.setAttribute('aria-label', cat.name);
+    wrap.appendChild(input);
+    if (!cat.money) { const s = document.createElement('span'); s.className = 'sfx'; s.textContent = cat.unit; wrap.appendChild(s); }
+    row.appendChild(lab); row.appendChild(wrap);
+    host.appendChild(row);
+  });
+}
+function readWeekFields() {
+  const v = {};
+  CATS.forEach((cat) => {
+    let n = parseFloat(document.getElementById('wk_' + cat.id).value);
+    if (isNaN(n) || n < 0) n = 0;
+    v[cat.id] = Math.round(n);
+  });
+  return v;
+}
+
+function updateWeekResolved() {
+  const dv = document.getElementById('weekDate').value;
+  const el = document.getElementById('weekResolved');
+  if (!dv) { el.textContent = 'Pick any day of the week you forgot.'; return; }
+  const key = isoWeek(parseLocalDate(dv)).key;
+  if (key >= isoWeek(new Date()).key) { el.textContent = 'That week isn’t finished yet — pick an earlier day.'; return; }
+  const exists = STATE.history.some((h) => h.week === key);
+  el.textContent = `${weekLabel(key)} · ${weekRangeLabel(key)}${exists ? ' — already in history (will update it)' : ''}`;
+}
+
+function openWeekEditor(weekKey) {
+  const entry = STATE.history.find((h) => h.week === weekKey);
+  if (!entry) return;
+  weekAdding = false; editingWeekKey = weekKey;
+  document.getElementById('weekHeading').textContent = 'Edit week';
+  document.getElementById('weekPickWrap').hidden = true;
+  const lbl = document.getElementById('weekLabelStatic');
+  lbl.hidden = false; lbl.textContent = `${weekLabel(weekKey)} · ${weekRangeLabel(weekKey)}`;
+  document.getElementById('weekDelete').hidden = false;
+  renderWeekFields(entry.values);
+  weekSheet.hidden = false;
+}
+
+function openAddWeek() {
+  weekAdding = true; editingWeekKey = null;
+  document.getElementById('weekHeading').textContent = 'Add a past week';
+  document.getElementById('weekPickWrap').hidden = false;
+  document.getElementById('weekLabelStatic').hidden = true;
+  document.getElementById('weekDelete').hidden = true;
+  const wd = document.getElementById('weekDate');
+  const mon = weekBounds(new Date()).monday;
+  const maxD = new Date(mon); maxD.setDate(mon.getDate() - 1); // last day of the previous week
+  wd.max = isoLocal(maxD); wd.value = '';
+  updateWeekResolved();
+  renderWeekFields(emptyValues());
+  weekSheet.hidden = false;
+  setTimeout(() => wd.focus(), 30);
+}
+function closeWeekEditor() { weekSheet.hidden = true; editingWeekKey = null; }
+
+function saveWeek() {
+  const values = readWeekFields();
+  let weekKey;
+  if (weekAdding) {
+    const dv = document.getElementById('weekDate').value;
+    const d = parseLocalDate(dv);
+    if (!d) { showToast('Pick a day of the week to add.', null, 2400); return; }
+    weekKey = isoWeek(d).key;
+    if (weekKey >= isoWeek(new Date()).key) { showToast('Only past weeks can be added.', null, 2800); return; }
+  } else {
+    weekKey = editingWeekKey;
+  }
+  const snap = snapshot();
+  const existing = STATE.history.find((h) => h.week === weekKey);
+  const zero = totalOf(values) === 0;
+  if (existing) { existing.values = values; existing.cleared = zero; }
+  else { STATE.history.unshift({ week: weekKey, values, cleared: zero }); }
+  STATE.allTime = computeAllTimeFromHistory(); // records come from closed weeks
+  STATE.allTimeMigrated = true;
+  save(); renderAll(); closeWeekEditor();
+  showToast(weekAdding ? 'Past week added' : 'Week updated', () => restore(snap), 6000);
+}
+
+function deleteWeek() {
+  if (!editingWeekKey) return;
+  if (!confirm('Delete this week from history? Your other weeks stay.')) return;
+  const snap = snapshot();
+  STATE.history = STATE.history.filter((h) => h.week !== editingWeekKey);
+  STATE.allTime = computeAllTimeFromHistory();
+  save(); renderAll(); closeWeekEditor();
+  showToast('Week deleted', () => restore(snap), 8000);
+}
+
+document.getElementById('addWeekBtn').addEventListener('click', openAddWeek);
+document.getElementById('weekDate').addEventListener('input', updateWeekResolved);
+document.getElementById('weekSave').addEventListener('click', saveWeek);
+document.getElementById('weekCancel').addEventListener('click', closeWeekEditor);
+document.getElementById('weekDelete').addEventListener('click', deleteWeek);
+weekSheet.addEventListener('click', (e) => { if (e.target === weekSheet) closeWeekEditor(); });
 
 /* -------------------------------------------------------------------------
    13. Story Journal — a small, toggle-on/off wall of success stories
@@ -1090,7 +1224,8 @@ lightbox.addEventListener('click', () => { lightbox.hidden = true; document.getE
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (!lightbox.hidden) { lightbox.hidden = true; return; }
-  if (!storySheet.hidden) { closeStory(); }
+  if (!storySheet.hidden) { closeStory(); return; }
+  if (!weekSheet.hidden) { closeWeekEditor(); }
 });
 
 /* -------------------------------------------------------------------------
